@@ -5,9 +5,12 @@ import com.zcg.cloud.entities.Payment;
 import com.zcg.cloud.service.PaymentService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.client.ServiceInstance;
+import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * @Author : zcg
@@ -21,6 +24,9 @@ public class PaymentController {
 
     @Value("${server.port}")
     private String serverPort;
+
+    @Resource
+    private DiscoveryClient discoveryClient;
 
     @PostMapping(value = "payment/save")
     public CommonResult save(@RequestBody Payment payment) {
@@ -42,5 +48,19 @@ public class PaymentController {
         }else{
             return new CommonResult(444,"没有对应记录,查询ID: "+id,null);
         }
+    }
+
+    @GetMapping(value = "payment/discovery")
+    public Object discovery() {
+        List<String> services = discoveryClient.getServices();
+        services.forEach(f -> {
+            log.info("****" + f);
+        } );
+        List<ServiceInstance> instances = discoveryClient.getInstances("CLOUD-PAYMENT-SERVICE");
+        instances.forEach(f -> {
+            log.info(f.getServiceId() + "\t" + f.getHost() + "\t" + f.getPort() + "\t" + f.getUri());
+        });
+
+        return this.discoveryClient;
     }
 }
