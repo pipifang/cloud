@@ -7,14 +7,14 @@ import org.springframework.web.client.RestTemplate;
 
 /**
  * @Author : zcg
- * @Data ：Create in 13:142021/4/10
+ * @Data ：Create in 12:152021/4/11
  */
 @Configuration
-public class ApplicationConfig {
+public class ApplicationContestConfig {
 
     @Bean
-//    @LoadBalanced
-    public RestTemplate getRestTemplate() {
+    @LoadBalanced
+    public RestTemplate restTemplate() {
         return new RestTemplate();
     }
 }
